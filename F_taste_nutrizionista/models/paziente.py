@@ -14,7 +14,7 @@ class PazienteModel(Base):
     fk_nutrizionista = Column(Integer, ForeignKey('nutrizionista.id_nutrizionista', onupdate="CASCADE"), nullable=True)
     nutrizionista = relationship("NutrizionistaModel", back_populates='pazienti', lazy=True)
     #misurazioni_medico = relationship("MisurazioneMedicoModel", back_populates='paziente', lazy=True, cascade='delete')
-    dieta_paziente = relationship("DietaModel",  back_populates='paziente' , lazy=True, cascade='delete')
+    #dieta_paziente = relationship("DietaModel",  back_populates='paziente' , lazy=True, cascade='delete')
     
     # Relazione verso la tabella di transizione per le patologie
     patologie = relationship('PatologiaModel', secondary='patologia_paziente', backref=backref('pazienti', lazy=True))
