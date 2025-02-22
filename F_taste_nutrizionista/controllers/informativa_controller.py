@@ -11,7 +11,7 @@ class InformativaPrivacy(Resource):
         return InformativaService.get_privacy_policy()
 
 
-    @nutrizionista_required
+    @nutrizionista_required()
     @nutrizionista_ns.doc(description="This POST method associates a privacy policy link with the Nutritionist's account")
     def post(self):
         return NutrizionistaService.associate_link_informativa()
