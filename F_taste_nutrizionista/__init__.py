@@ -1,4 +1,5 @@
 import os
+import threading
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_restx import Api, ValidationError as ValidationErr
@@ -26,6 +27,11 @@ from F_taste_nutrizionista.utils.jwt_custom_decorators import NoAuthorizationExc
 
 from logging import getLogger
 
+from F_taste_nutrizionista.kafka.kafka_consumer import consume
+
+def start_kafka_consumer(app):
+    thread = threading.Thread(target=consume,args=(app,) ,daemon=True)
+    thread.start()
 
 def create_app():
     # create and configure the app
@@ -143,5 +149,8 @@ def create_app():
     @app.route('/health', methods=['GET'])#è solo per prova
     def health_check():
         return {'message': 'API nutrizionista è online'}, 200
+    
+    # Avvia il Consumer Kafka all'avvio del servizio paziente
+    start_kafka_consumer(app)
     
     return app
