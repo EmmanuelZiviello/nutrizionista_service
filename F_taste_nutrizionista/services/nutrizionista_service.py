@@ -41,7 +41,7 @@ class NutrizionistaService:
                 "esito_login": "successo",
                 "access_token": jwt_factory.create_access_token(email_nutrizionista, 'dietitian'),
                 "refresh_token": jwt_factory.create_refresh_token(email_nutrizionista, 'dietitian'),
-                "id_paziente": nutrizionista.id_nutrizionista
+                "id_nutrizionista": nutrizionista.id_nutrizionista
             }, 200
 
         session.close()
