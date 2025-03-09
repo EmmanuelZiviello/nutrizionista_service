@@ -150,7 +150,7 @@ def create_app():
     def health_check():
         return {'message': 'API nutrizionista è online'}, 200
     
-    # Avvia il Consumer Kafka all'avvio del servizio paziente
+    # Avvia il Consumer Kafka all'avvio del servizio nutrizionista
     start_kafka_consumer(app)
     
     return app
