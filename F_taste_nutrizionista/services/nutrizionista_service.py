@@ -19,6 +19,8 @@ pazienti_schema = PazienteSchema(many=True, only=['id_paziente'])
 
 nutrizionista_schema = NutrizionistaSchema()
 
+nutrizionisti_schema = NutrizionistaSchema(many = True)
+
 jwt_factory = JWTTokenFactory()
 
 class NutrizionistaService:
@@ -68,8 +70,28 @@ class NutrizionistaService:
         session.close()
         return {'message': 'registrazione avvenuta con successo'}, 201
 
-        
-        
+    @staticmethod
+    def delete(s_nutrizionista):
+        if "email" not in s_nutrizionista:
+            return {"esito delete":"Dati mancanti"}, 400
+        session=get_session('admin')
+        email=s_nutrizionista["email"]
+        nutrizionista=NutrizionistaRepository.find_by_email(email,session)
+        if nutrizionista is None:
+            session.close()
+            return {"esito delete": "Nutrizionista non trovato"}, 404
+        NutrizionistaRepository.delete(nutrizionista,session)
+        session.close()
+        return {"message":"Nutrizionista eliminato con successo"}, 200
+
+    
+    @staticmethod
+    def getAll():
+        session=get_session('admin')
+        nutrizionisti_data=NutrizionistaRepository.get_all_nutrizionisti(session)
+        output_richiesta={"nutrizionisti": nutrizionisti_schema.dump(nutrizionisti_data)}, 200
+        session.close()
+        return output_richiesta
 
    
 

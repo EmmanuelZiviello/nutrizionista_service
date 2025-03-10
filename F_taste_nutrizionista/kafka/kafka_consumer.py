@@ -16,6 +16,8 @@ KAFKA_BROKER_URL = "kafka-ftaste-kafka-ftaste.j.aivencloud.com:11837"
 consumer = KafkaConsumer(
     'dietitian.login.request',
     'admin.dietitianRegistration.request',
+    'dietitian.delete.request',
+    'dietitian.getAll.request',
     bootstrap_servers=KAFKA_BROKER_URL,
     client_id="dietitian_consumer",
     group_id="dietitian_service",
@@ -41,6 +43,16 @@ def consume(app):
             elif topic == "dietitian.login.request":
                 response,status=NutrizionistaService.login_nutrizionista(data)
                 topic_producer="dietitian.login.success" if status == 200 else "dietitian.login.failed"
+                send_kafka_message(topic_producer,response)
+            
+            elif topic == "dietitian.delete.request":
+                response,status=NutrizionistaService.delete(data)
+                topic_producer="dietitian.delete.success" if status == 200 else "dietitian.delete.failed"
+                send_kafka_message(topic_producer,response)
+            
+            elif topic == "dietitian.getAll.request":
+                response,status=NutrizionistaService.getAll()
+                topic_producer="dietitian.getAll.success" if status == 200 else "dietitian.getAll.failed"
                 send_kafka_message(topic_producer,response)
             
             

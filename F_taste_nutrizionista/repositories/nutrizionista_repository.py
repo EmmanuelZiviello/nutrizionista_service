@@ -28,6 +28,11 @@ class NutrizionistaRepository:
         session.commit()
 
     @staticmethod
+    def get_all_nutrizionisti(session=None):
+        session = session or get_session('admin')
+        return session.query(NutrizionistaModel).all()
+
+    @staticmethod
     def update_link_informativa(nutrizionista, link_informativa):
         session = get_session("dietitian")
         nutrizionista.link_informativa = link_informativa
