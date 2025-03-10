@@ -75,7 +75,7 @@ class PazienteService:
         response=wait_for_kafka_response(["patient.addDietitian.success", "patient.addDietitian.failed"])
         return response
 
-
+    '''
     @staticmethod
     def aggiungi_paziente():
         session=get_session('dietitian')
@@ -120,7 +120,7 @@ class PazienteService:
         RichiestaAggiuntaPazienteRepository.add_richiesta(paziente.id_paziente, nutrizionista.id_nutrizionista, nutrizionista,session)
         session.close()
         return {"message": "richiesta aggiunta a propria lista pazienti inviata con successo"}, 200
-    
+    '''
 
 
 
