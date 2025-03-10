@@ -7,9 +7,12 @@ from F_taste_nutrizionista.schemas.paziente import PazienteSchema
 from flask import request
 from flask_jwt_extended import get_jwt_identity
 
+from F_taste_nutrizionista.kafka.kafka_producer import send_kafka_message
+from F_taste_nutrizionista.utils.kafka_helpers import wait_for_kafka_response
 
 paziente_schema_for_dump = PazienteSchema(only=['id_paziente', 'sesso', 'data_nascita'])
 paziente_schema_put = PazienteSchema(exclude=['email','password'], partial=['fk_nutrizionista'])
+
 
 class PazienteService:
 
@@ -54,6 +57,23 @@ class PazienteService:
         finally:
             session.close()
 
+
+    @staticmethod
+    def aggiungi_paziente(s_paziente,email_nutrizionista):
+        if "id_paziente" not in s_paziente:
+            return {"message": "ID paziente richiesto"}, 400  # HTTP 400 Bad Request
+        id_paziente=s_paziente["id_paziente"]
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"message": "Nutrizionista non presente nel database"}, 404
+        id_nutrizionista=nutrizionista.id_nutrizionista
+        session.close()
+        message={"id_paziente":id_paziente,"id_nutrizionista":id_nutrizionista}
+        send_kafka_message("patient.addDietitian.request",message)
+        response=wait_for_kafka_response(["patient.addDietitian.success", "patient.addDietitian.failed"])
+        return response
 
 
     @staticmethod

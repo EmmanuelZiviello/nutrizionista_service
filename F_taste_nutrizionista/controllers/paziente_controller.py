@@ -43,7 +43,9 @@ class Paziente(Resource):
     @nutrizionista_ns.expect(get_paziente, validate=True)
     @nutrizionista_ns.doc('aggiungi paziente al nutrizionista')
     def post(self):
-        return PazienteService.aggiungi_paziente()
+        patient_json=request.get_json()
+        email_nutrizionista = get_jwt_identity()
+        return PazienteService.aggiungi_paziente(patient_json,email_nutrizionista)
     
 
 
