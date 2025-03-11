@@ -39,6 +39,7 @@ class DiseaseDelPazienteController(Resource):
         return PazienteService.get_conditions(request_args["id_paziente"], email_nutrizionista)
 
 class Paziente(Resource):
+    #da spostare in nutrizionista controller /pazienti
     @nutrizionista_required()
     @nutrizionista_ns.expect(get_paziente, validate=True)
     @nutrizionista_ns.doc('aggiungi paziente al nutrizionista')
