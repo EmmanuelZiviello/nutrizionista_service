@@ -10,6 +10,8 @@ from F_taste_nutrizionista.schemas.nutrizionista import NutrizionistaSchema
 from F_taste_nutrizionista.utils.hashing_password import hash_pwd,check_pwd
 from F_taste_nutrizionista.utils.jwt_token_factory import JWTTokenFactory
 
+from F_taste_nutrizionista.kafka.kafka_producer import send_kafka_message
+from F_taste_nutrizionista.utils.kafka_helpers import wait_for_kafka_response
 
 post_link_informativa = nutrizionista_ns.model('post_link_informativa', {
     'link_informativa': fields.String(required = True),
@@ -92,6 +94,21 @@ class NutrizionistaService:
         output_richiesta={"nutrizionisti": nutrizionisti_schema.dump(nutrizionisti_data)}, 200
         session.close()
         return output_richiesta
+    
+    @staticmethod
+    def get_pazienti(email_nutrizionista):
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"message": "Nutrizionista non presente nel db"}, 404
+        id_nutrizionista=nutrizionista.id_nutrizionista
+        session.close()
+        message={"id_nutrizionista":id_nutrizionista}
+        send_kafka_message("dietitian.getPazienti.request",message)
+        response=wait_for_kafka_response(["dietitian.getPazienti.success", "dietitian.getPazienti.failed"])
+        return response
+
 
     @staticmethod
     def  exist(s_nutrizionista):
@@ -153,6 +170,9 @@ class NutrizionistaService:
         # Ritorniamo il messaggio di successo
         return {"message": "Associazione link informativa all'account eseguita con successo."}, 201
 
+
+   
+    '''
     @staticmethod
     def get_pazienti(email_nutrizionista):
       
@@ -167,3 +187,4 @@ class NutrizionistaService:
         output_richiesta={"pazienti": pazienti_schema.dump(pazienti_data)}, 200
         session.close()
         return output_richiesta
+        '''
