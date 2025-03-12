@@ -93,7 +93,21 @@ class NutrizionistaService:
         session.close()
         return output_richiesta
 
-   
+    @staticmethod
+    def  exist(s_nutrizionista):
+        if "id_nutrizionista" not in s_nutrizionista:
+            return {"status_code":"400"}, 400
+            #return {"esito exist_Dietitian":"Dati mancanti"}, 400
+        id_nutrizionista=s_nutrizionista["id_nutrizionista"]
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_id(id_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"status_code":"404"}, 404
+            #return {"message": "Nutrizionista non presente nel database"}, 404
+        session.close()
+        return {"status_code":"200"}, 200
+        #return {"message":"Nutrizionista presente nel database"}, 200
 
     @staticmethod
     def associate_link_informativa():
