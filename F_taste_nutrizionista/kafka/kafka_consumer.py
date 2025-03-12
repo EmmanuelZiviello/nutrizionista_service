@@ -19,6 +19,7 @@ consumer = KafkaConsumer(
     'dietitian.delete.request',
     'dietitian.getAll.request',
     'dietitian.exist.request',
+    'dietitian.email.request',
     bootstrap_servers=KAFKA_BROKER_URL,
     client_id="dietitian_consumer",
     group_id="dietitian_service",
@@ -59,6 +60,10 @@ def consume(app):
             elif topic == "dietitian.exist.request":
                 response,status=NutrizionistaService.exist(data)
                 topic_producer="dietitian.exist.success" if status == 200 else "dietitian.exist.failed"
+                send_kafka_message(topic_producer,response)
+            elif topic == "dietitian.email.request":
+                response,status=NutrizionistaService.email(data)
+                topic_producer="dietitian.email.success" if status == 200 else "dietitian.email.failed"
                 send_kafka_message(topic_producer,response)
             
             
