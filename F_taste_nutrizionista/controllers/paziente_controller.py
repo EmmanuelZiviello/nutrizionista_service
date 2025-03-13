@@ -49,15 +49,15 @@ class Paziente(Resource):
         return PazienteService.aggiungi_paziente(patient_json,email_nutrizionista)
     
 
-
+    #da spostare in nutrizionista controller /pazienti
     @nutrizionista_required()
     @nutrizionista_ns.expect(get_paziente)
     @nutrizionista_ns.doc('rimuove il paziente dalla lista del nutrizionista')
     def delete(self):
-        request_dict = request.get_json()
+        patient_json = request.get_json()
         email_nutrizionista = get_jwt_identity()
 
-        return  PazienteService.rimuovi_paziente(request_dict, email_nutrizionista)
+        return  PazienteService.rimuovi_paziente(patient_json, email_nutrizionista)
     
 
 

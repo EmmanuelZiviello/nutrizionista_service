@@ -122,6 +122,20 @@ class PazienteService:
         return {"message": "richiesta aggiunta a propria lista pazienti inviata con successo"}, 200
     '''
 
+    @staticmethod
+    def rimuovi_paziente(s_paziente,email_nutrizionista):
+        id_paziente=s_paziente["id_paziente"]
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"message": "Nutrizionista non presente nel database"}, 404
+        id_nutrizionista=nutrizionista.id_nutrizionista#serve salvarlo per mandarlo con kafka
+        session.close()
+        message={"id_paziente":id_paziente,"id_nutrizionista":id_nutrizionista}
+        send_kafka_message("dietitian.removeFk.request",message)
+        response=wait_for_kafka_response(["dietitian.removeFk.success", "dietitian.removeFk.failed"])
+        return response
 
 
     @staticmethod
