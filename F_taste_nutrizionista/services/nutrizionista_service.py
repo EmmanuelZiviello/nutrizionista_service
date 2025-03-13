@@ -23,6 +23,8 @@ nutrizionista_schema = NutrizionistaSchema()
 
 nutrizionisti_schema = NutrizionistaSchema(many = True)
 
+nutrizionista_schema_for_dump = NutrizionistaSchema(only=['id_nutrizionista', 'nome', 'cognome'])
+
 jwt_factory = JWTTokenFactory()
 
 class NutrizionistaService:
@@ -108,6 +110,21 @@ class NutrizionistaService:
         send_kafka_message("dietitian.getPazienti.request",message)
         response=wait_for_kafka_response(["dietitian.getPazienti.success", "dietitian.getPazienti.failed"])
         return response
+
+    @staticmethod
+    def get_nutrizionista(s_paziente):
+        if "id_nutrizionista" not in s_paziente:
+            return {"esito get_nutrizionista":"Dati mancanti"}, 400
+        session=get_session('dietitian')
+        id_nutrizionista=s_paziente["id_nutrizionista"]
+        nutrizionista=NutrizionistaRepository.find_by_id(id_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"esito delete": "Nutrizionista non trovato"}, 404
+        output_richiesta=nutrizionista_schema_for_dump.dump(nutrizionista), 200
+        session.close()
+        return output_richiesta
+        
 
 
     @staticmethod

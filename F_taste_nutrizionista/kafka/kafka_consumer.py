@@ -15,6 +15,7 @@ KAFKA_BROKER_URL = "kafka-ftaste-kafka-ftaste.j.aivencloud.com:11837"
 
 consumer = KafkaConsumer(
     'dietitian.login.request',
+    'patient.getNutrizionista.request',
     'admin.dietitianRegistration.request',
     'dietitian.delete.request',
     'dietitian.getAll.request',
@@ -64,6 +65,10 @@ def consume(app):
             elif topic == "dietitian.email.request":
                 response,status=NutrizionistaService.email(data)
                 topic_producer="dietitian.email.success" if status == 200 else "dietitian.email.failed"
+                send_kafka_message(topic_producer,response)
+            elif topic == "patient.getNutrizionista.request":
+                response,status=NutrizionistaService.get_nutrizionista(data)
+                topic_producer="patient.getNutrizionista.success" if status == 200 else "patient.getNutrizionista.failed"
                 send_kafka_message(topic_producer,response)
             
             

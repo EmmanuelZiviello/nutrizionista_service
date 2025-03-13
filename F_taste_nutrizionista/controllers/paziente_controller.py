@@ -59,7 +59,7 @@ class Paziente(Resource):
         return  PazienteService.rimuovi_paziente(patient_json, email_nutrizionista)
     
 
-    #
+    
     @nutrizionista_required()
     @nutrizionista_ns.expect(modify_paziente_from_nutrizionista)
     @nutrizionista_ns.doc('modifica paziente')
