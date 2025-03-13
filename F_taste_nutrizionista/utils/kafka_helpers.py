@@ -17,6 +17,8 @@ consumer_response = KafkaConsumer(
     'dietitian.getPazienti.failed',
     'dietitian.removeFk.success',
     'dietitian.removeFk.failed',
+    'dietitian.getPaziente.success',
+    'dietitian.getPaziente.failed',
     bootstrap_servers=KAFKA_BROKER_URL,
     client_id="dietitian_consumer",
     group_id="dietitian_service_response",

@@ -214,9 +214,23 @@ class PazienteService:
 
 
 
+    @staticmethod
+    def get_paziente_info(id_paziente,email_nutrizionista):
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"message": "Nutrizionista non presente nel database"}, 404
+        id_nutrizionista=nutrizionista.id_nutrizionista#serve salvarlo per mandarlo con kafka
+        session.close()
+        message={"id_paziente":id_paziente,"id_nutrizionista":id_nutrizionista}
+        send_kafka_message("dietitian.getPaziente.request",message)
+        response=wait_for_kafka_response(["dietitian.getPaziente.success", "dietitian.getPaziente.failed"])
+        return response
+        
 
 
-
+    '''
     @staticmethod
     def get_paziente_info(id_paziente, email_nutrizionista):
         session = get_session('dietitian')
@@ -242,3 +256,4 @@ class PazienteService:
             return pazienteSchema.dump(patient), 200
         finally:
             session.close()
+        '''

@@ -59,7 +59,7 @@ class Paziente(Resource):
         return  PazienteService.rimuovi_paziente(patient_json, email_nutrizionista)
     
 
-
+    #
     @nutrizionista_required()
     @nutrizionista_ns.expect(modify_paziente_from_nutrizionista)
     @nutrizionista_ns.doc('modifica paziente')
@@ -73,16 +73,15 @@ class Paziente(Resource):
 
         return PazienteService.modifica_paziente(email_nutrizionista, s_paziente)
     
-
+    #
     @nutrizionista_required()
     @nutrizionista_ns.doc('recupera paziente', params={'id_paziente': 'PAZ1234'})
     def get(self):
         patient_args = request.args
         email_nutrizionista = get_jwt_identity()
-
-        validation_errors = paziente_schema_get.validate(patient_args)
-        if validation_errors:
-            return validation_errors, 400
+        
+        if "id_paziente" not in patient_args:
+            return {"esito get_paziente_info":"id_paziente non presente"}, 404
 
         return PazienteService.get_paziente_info(patient_args['id_paziente'], email_nutrizionista)
 
