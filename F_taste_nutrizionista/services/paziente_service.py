@@ -178,6 +178,37 @@ class PazienteService:
         return chiavi_dizionario.issubset(chiavi_ammesse) and len(chiavi_dizionario) <= 3
 
     @staticmethod
+    def modifica_paziente(email_nutrizionista,s_paziente):
+        session=get_session('dietitian')
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {'message': 'Nutrizionista non presente nel Database' }, 404
+        id_nutrizionista=nutrizionista.id_nutrizionista
+        id_paziente=s_paziente["id_paziente"]
+        session.close()
+          # Cotrollo dinamico sulla sicurezza del dizionario inviato
+        if not PazienteService.check_chiavi(s_paziente):
+            return {"messsage" : "Campi per la richiesta non validi"}, 404
+        # Se nella richiesta non sono presenti i campi sesso e data di nascita viene segnalato un errore
+        if "data_nascita" not in s_paziente and "sesso" not in s_paziente:
+            return {"message" : "Serve almeno un campo tra sesso e data_nascita"}, 404
+        # Variabili per data_nascita e sesso
+        data_nascita = s_paziente.get("data_nascita")
+        sesso = s_paziente.get("sesso")
+         # Creazione del messaggio con i dati disponibili
+        message = {"id_paziente": id_paziente,"id_nutrizionista":id_nutrizionista}
+        if data_nascita is not None:
+            message["data_nascita"] = data_nascita
+        if sesso is not None:
+            message["sesso"] = sesso
+        send_kafka_message("patient.update.request",message)
+        response=wait_for_kafka_response(["patient.update.success", "patient.update.failed"])
+        return response
+        
+        
+    '''
+    @staticmethod
     def modifica_paziente(email_nutrizionista, s_paziente):
         session = get_session('dietitian')
         nutrizionista = NutrizionistaRepository.find_by_email(email_nutrizionista, session)
@@ -210,7 +241,7 @@ class PazienteService:
         #quindi riceve tramite kafka il nuovo paziente con lo stesso id e nuovi dati e lo restituisce con dump
         session.close()
         return paziente_schema_put.dump(paziente), 200
-    
+     '''
 
 
 

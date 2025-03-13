@@ -67,13 +67,12 @@ class Paziente(Resource):
         s_paziente = request.get_json()
         email_nutrizionista = get_jwt_identity()
         
-        validation_errors = paziente_schema_put.validate(s_paziente)
-        if validation_errors:
-            return validation_errors, 400
+        if "id_paziente" not in s_paziente:
+            return {"esito modifica_paziente":"id_paziente non presente"}, 404
 
         return PazienteService.modifica_paziente(email_nutrizionista, s_paziente)
     
-    #
+    
     @nutrizionista_required()
     @nutrizionista_ns.doc('recupera paziente', params={'id_paziente': 'PAZ1234'})
     def get(self):
