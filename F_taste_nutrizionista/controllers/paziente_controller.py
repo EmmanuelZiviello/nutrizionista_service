@@ -56,7 +56,6 @@ class Paziente(Resource):
     def delete(self):
         patient_json = request.get_json()
         email_nutrizionista = get_jwt_identity()
-
         return  PazienteService.rimuovi_paziente(patient_json, email_nutrizionista)
     
 

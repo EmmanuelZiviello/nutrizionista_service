@@ -137,7 +137,7 @@ class PazienteService:
         response=wait_for_kafka_response(["dietitian.removeFk.success", "dietitian.removeFk.failed"])
         return response
 
-
+    '''
     @staticmethod
     def rimuovi_paziente(request_dict, email_nutrizionista):
         session=get_session('dietitian')
@@ -168,7 +168,7 @@ class PazienteService:
             session.close()
             return {"message":"Errore revoca paziente del  nutrizionista"},400
         return {"message": "non segui più questo paziente"}, 200
-    
+    '''
 
 
     @staticmethod
