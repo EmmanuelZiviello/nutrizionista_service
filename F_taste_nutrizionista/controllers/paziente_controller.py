@@ -72,7 +72,7 @@ class Paziente(Resource):
 
         return PazienteService.modifica_paziente(email_nutrizionista, s_paziente)
     
-    
+    #aggiungere stampa di valori di misurazione medico
     @nutrizionista_required()
     @nutrizionista_ns.doc('recupera paziente', params={'id_paziente': 'PAZ1234'})
     def get(self):

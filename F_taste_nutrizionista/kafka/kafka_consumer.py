@@ -22,6 +22,7 @@ consumer = KafkaConsumer(
     'dietitian.exist.request',
     'dietitian.existGet.request',
     'dietitian.email.request',
+    'dietitian.addLink.request',
     bootstrap_servers=KAFKA_BROKER_URL,
     client_id="dietitian_consumer",
     group_id="dietitian_service",
@@ -74,6 +75,10 @@ def consume(app):
             elif topic == "patient.getNutrizionista.request":
                 response,status=NutrizionistaService.get_nutrizionista(data)
                 topic_producer="patient.getNutrizionista.success" if status == 200 else "patient.getNutrizionista.failed"
+                send_kafka_message(topic_producer,response)
+            elif topic == "dietitian.addLink.request":
+                response,status=NutrizionistaService.add_link(data)
+                topic_producer="dietitian.addLink.success" if status == 201 else "dietitian.addLink.failed"
                 send_kafka_message(topic_producer,response)
             
             

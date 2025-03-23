@@ -12,14 +12,11 @@ class AllergiaRepository:
     @staticmethod
     def get_all_allergie(session=None):
         session = session or get_session('dietitian')
-        result = []
         try:
             # Eseguiamo la query per ottenere tutte le patologie
             allergie = session.query(AllergiaModel).all()
             # Aggiungiamo il nome di ogni patologia alla lista result
-            for allergia in allergie:
-                result.append(allergia.allergia)
-            return result
+            return [allergia.allergia for allergia in allergie]
         except Exception:
             # In caso di errore, ritorniamo una lista vuota
             return []

@@ -53,7 +53,23 @@ class NutrizionistaService:
         session.close()
         return {"esito_login": "password errata"}, 401
 
-    
+    @staticmethod
+    def add_link(s_nutrizionista):
+        if "email_nutrizionista" not in s_nutrizionista or "link" not in s_nutrizionista:
+            return {"status_code":"400"}, 400
+        session=get_session("dietitian")
+        email_nutrizionista=s_nutrizionista["email_nutrizionista"]
+        link=s_nutrizionista["link"]
+        nutrizionista=NutrizionistaRepository.find_by_email(email_nutrizionista,session)
+        if nutrizionista is None:
+            session.close()
+            return {"status_code": "404"}, 404
+        nutrizionista.link_informativa=link
+        NutrizionistaRepository.add(nutrizionista,session)
+        session.close()
+        return {"status_code":"201"}, 201
+        
+
     @staticmethod
     def register_nutrizionista(s_nutrizionista):
         session=get_session('admin')
