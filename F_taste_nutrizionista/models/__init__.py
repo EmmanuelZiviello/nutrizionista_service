@@ -1,0 +1,1 @@
+from F_taste_nutrizionista.models.nutrizionista import NutrizionistaModel
